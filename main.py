@@ -1,20 +1,21 @@
 import flet as ft
+from datetime import datetime
 
 def main(pagina):
-    texto = ft.Text("Oi")
-
     chat = ft.Column()
+    hoje = datetime.now()
+    horario = hoje.strftime('%d/%m/%Y %H:%M:%S')
 
     def enviar_mensaem_tunel(mensagem):
         chat.controls.append(mensagem)
-        pagina.update
+        pagina.update()
         pass
 
     pagina.pubsub.subscribe(enviar_mensaem_tunel)
 
     def enviar_mensagem (evento):
-        texto_mensagem=ft.Text (f"{nome_usuario.value}: {campo_mensagem.value}")
-        pagina.pubsub.sendall(texto_mensagem)
+        texto_mensagem=ft.Text (f"{horario} - {nome_usuario.value}: {campo_mensagem.value}")
+        pagina.pubsub.send_all(texto_mensagem)
         campo_mensagem.value=0
         pagina.update()
 
@@ -22,13 +23,15 @@ def main(pagina):
     botao_enviar=ft.IconButton(on_click=enviar_mensagem,icon="send")
     linha_enviar=ft.Row([campo_mensagem,botao_enviar])
 
+    texto = ft.Text("Bem vindo ao chat")
+
     def entrar_chat (evento):
         popup.open="False"
         pagina.remove(texto)
         pagina.remove(botao)
         pagina.add(chat)
         pagina.add(linha_enviar)
-        chat.controls.append(ft.Text(f"{nome_usuario.value} entrou no chat"))
+        pagina.pubsub.send_all(ft.Text(f"{horario} - {nome_usuario.value} entrou no chat"))
         pagina.update()
 
     titulo_popup = ft.Text("Bem vindo")
